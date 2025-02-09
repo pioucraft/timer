@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Timer</title>
+  <style>
+    /* Remove default spacing */
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    /* Container for the input form */
+    #inputContainer {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      font-family: sans-serif;
+    }
+    /* Style both inputs with a fixed width */
+    #inputContainer input {
+      font-size: 24px;
+      padding: 10px;
+      margin: 5px;
+      width: 120px;
+      box-sizing: border-box;
+    }
+    #inputContainer button {
+      font-size: 24px;
+      padding: 10px;
+      margin: 5px;
+    }
+    /* Timer display style:
+       - It is centered.
+       - The container always takes 2/3 of the viewport height.
+       - The text is centered both vertically and horizontally.
+       - The background is black. */
+    #timerDisplay {
+      display: none; /* Hidden until timer starts */
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100%;
+      height: 66.66vh; /* 2/3 of the viewport height */
+      line-height: 66.66vh; /* Vertically center the text */
+      text-align: center;
+      font-family: sans-serif;
+      color: white;
+      background-color: black;
+      font-size: calc(66.66vh * 0.8); /* Adjust the multiplier as needed */
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+</head>
+<body>
+  <!-- Input form for minutes and seconds -->
+  <div id="inputContainer">
+    <input type="number" id="minutesInput" placeholder="Minutes" min="0">
+    <input type="number" id="secondsInput" placeholder="Seconds" min="0" max="59">
+    <br>
+    <button id="startButton">Start Timer</button>
+  </div>
+
+  <!-- Timer display element -->
+  <div id="timerDisplay"></div>
+
+  <script>
+    const startButton = document.getElementById('startButton');
+    const minutesInput = document.getElementById('minutesInput');
+    const secondsInput = document.getElementById('secondsInput');
+    const timerDisplay = document.getElementById('timerDisplay');
+    const inputContainer = document.getElementById('inputContainer');
+
+    // Helper function to add a leading zero if needed
+    function pad(num) {
+      return num < 10 ? '0' + num : num;
+    }
+
+    // Start the timer when the button is clicked
+    startButton.addEventListener('click', function() {
+      // Retrieve the values from inputs; default to 0 if empty
+      const minutes = parseInt(minutesInput.value, 10) || 0;
+      const seconds = parseInt(secondsInput.value, 10) || 0;
+      let totalSeconds = minutes * 60 + seconds;
+
+      if (totalSeconds <= 0) {
+        alert('Please enter a time greater than 0.');
+        return;
+      }
+      
+      // Hide the input form and show the timer display
+      inputContainer.style.display = 'none';
+      timerDisplay.style.display = 'block';
+      
+      // Change the entire page background to black
+      document.body.style.backgroundColor = 'black';
+
+      // Set the initial timer display text in MM:SS format
+      timerDisplay.textContent = pad(Math.floor(totalSeconds / 60)) + ':' + pad(totalSeconds % 60);
+      
+      // Start the countdown
+      const countdown = setInterval(function() {
+        totalSeconds--;
+        if (totalSeconds <= 0) {
+          clearInterval(countdown);
+          // When the timer ends, change the page to a bright white screen with no content
+          document.body.style.backgroundColor = 'white';
+          document.body.innerHTML = '';
+        } else {
+          const mins = Math.floor(totalSeconds / 60);
+          const secs = totalSeconds % 60;
+          timerDisplay.textContent = pad(mins) + ':' + pad(secs);
+        }
+      }, 1000);
+    });
+  </script>
+</body>
+</html>
+
